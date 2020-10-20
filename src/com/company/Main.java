@@ -4,51 +4,40 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-class Operations
+class Conversions
 {
-    public static void print_error(int error)
+    public static boolean is_roman(String str)
     {
-        if (error == 1)
+        char[] romans = {'I', 'V', 'X'};
+
+        for (int i = 0; i < str.length(); i++)
         {
-            System.out.println("Incorrect number of operands");
-            return ;
+            if (Arrays.binarySearch(romans, str.charAt(i)) < 0)
+                return (false);
         }
-        else if (error == 2)
-        {
-            System.out.println("Invalid operand");
-            return ;
-        }
-        else if (error == 3)
-        {
-            System.out.println("Both arabian and roman numbers");
-            return ;
-        }
-        else if (error == 4)
-        {
-            System.out.println("Incorrect input");
-            return ;
-        }
+        return (true);
     }
-}
 
-public class Main {
-
-
-
-    public static int check_correct(String[] args)
+    public static String int_to_roman(int number)
     {
-        char[] operands = {'+', '-', '*', '/'};
-        args[0] = args[0].toUpperCase();
-        args[2] = args[2].toUpperCase();
-        if (args.length != 3)
-            return (1);
-        if (args[1].length() != 1)
-            return (2);
-        if (Arrays.binarySearch(operands, args[1].charAt(0)) < 0)
-            return (2);
+        String[] romans_units = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+        String[] romans_dozens = {"X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+        String result = "";
+        int temp = 0;
 
-
-        return (0);
+        if (number == 100)
+            return ("C");
+        else
+        {
+            temp = number / 10;
+            if (temp >= 1)
+            {
+                result = result + romans_dozens[temp - 1];
+                number = number % 10;
+            }
+            result = result + romans_units[number - 1];
+        }
+        return (result);
     }
 
     public static int roman_to_int(String roman)
@@ -85,17 +74,65 @@ public class Main {
         }
         return (result);
     }
+}
 
-    public static boolean is_roman(String str)
+class Operations
+{
+    public static void print_error(int error)
     {
-        char[] romans = {'I', 'V', 'X'};
-
-        for (int i = 0; i < str.length(); i++)
+        if (error == 1)
         {
-            if (Arrays.binarySearch(romans, str.charAt(i)) < 0)
-                return (false);
+            System.out.println("Incorrect number of operands");
+            return ;
         }
-        return (true);
+        else if (error == 2)
+        {
+            System.out.println("Invalid operand");
+            return ;
+        }
+        else if (error == 3)
+        {
+            System.out.println("Both arabian and roman numbers");
+            return ;
+        }
+        else if (error == 4)
+        {
+            System.out.println("Incorrect input");
+            return ;
+        }
+    }
+
+    public static boolean is_roman_arabian(String number)
+    {
+        for (int i = 0; i < number.length(); i++)
+        {
+            if ((number.charAt(i) >= '0' && number.charAt(i) <= '9') || Conversions.is_roman(number))
+                return (true);
+        }
+        return (false);
+    }
+
+    public static int check_correct(String[] args)
+    {
+        char[] operands = {'+', '-', '*', '/'};
+        args[0] = args[0].toUpperCase();
+        args[2] = args[2].toUpperCase();
+        if (args.length != 3)
+            return (1);
+        if (!is_roman_arabian(args[0]))
+            return (4);
+        if (!is_roman_arabian(args[2]))
+            return (4);
+        if (args[1].length() != 1)
+            return (2);
+        if (Arrays.binarySearch(operands, args[1].charAt(0)) < 0)
+        {
+            if (args[1].charAt(0) == '*')
+                return (0);
+            else
+                return (2);
+        }
+        return (0);
     }
 
     public static int do_calc(int op_1, int op_2, String operand)
@@ -115,15 +152,18 @@ public class Main {
         }
         return (0);
     }
+}
 
+public class Main {
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         String input_str = input.nextLine();
+
         int result = 0;
         String[] vars = input_str.split(" ");
         int error = 0;
-        if ((error = check_correct(vars)) != 0)
+        if ((error = Operations.check_correct(vars)) != 0)
         {
             Operations.print_error(error);
             return ;
@@ -133,14 +173,14 @@ public class Main {
         int op_1 = 0;
         int op_2 = 0;
         boolean is_romanian = false;
-        if (is_roman(vars[0]) && is_roman(vars[2]))
+        if (Conversions.is_roman(vars[0]) && Conversions.is_roman(vars[2]))
         {
             is_romanian = true;
-            op_1 = roman_to_int(vars[0]);
-            op_2 = roman_to_int(vars[2]);
+            op_1 = Conversions.roman_to_int(vars[0]);
+            op_2 = Conversions.roman_to_int(vars[2]);
 
         }
-        else if (is_roman(vars[0]) || is_roman(vars[2]))
+        else if (Conversions.is_roman(vars[0]) || Conversions.is_roman(vars[2]))
         {
             Operations.print_error(3);
             return ;
@@ -150,20 +190,16 @@ public class Main {
             op_1 = Integer.parseInt(vars[0]);
             op_2 = Integer.parseInt(vars[2]);
         }
-        if (op_1 > 10 || op_2 > 10 || op_1 < 1 || op_2 < 0)
+        if (op_1 > 10 || op_2 > 10 || op_1 < 1 || op_2 < 1)
         {
             Operations.print_error(4);
             return ;
         }
-        result = do_calc(op_1, op_2, vars[1]);
+        result = Operations.do_calc(op_1, op_2, vars[1]);
         if (is_romanian)
-        {
-            for (int i = 0; i < result; i++)
-                System.out.print("I");
-        }
+            System.out.println(Conversions.int_to_roman(result));
         else
             System.out.println(result);
-
         return ;
     }
 }
