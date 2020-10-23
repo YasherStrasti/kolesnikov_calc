@@ -35,7 +35,8 @@ class Conversions
                 result = result + romans_dozens[temp - 1];
                 number = number % 10;
             }
-            result = result + romans_units[number - 1];
+            if (number != 0)
+                result = result + romans_units[number - 1];
         }
         return (result);
     }
