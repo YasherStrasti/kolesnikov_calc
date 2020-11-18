@@ -23,7 +23,7 @@ class Conversions
         String[] romans_units = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
         String[] romans_dozens = {"X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
         String result = "";
-        int temp = 0;
+        int temp;
 
         if (number == 100)
             return ("C");
@@ -84,22 +84,18 @@ class Operations
         if (error == 1)
         {
             System.out.println("Incorrect number of operands");
-            return ;
         }
         else if (error == 2)
         {
             System.out.println("Invalid operand");
-            return ;
         }
         else if (error == 3)
         {
             System.out.println("Both arabian and roman numbers");
-            return ;
         }
         else if (error == 4)
         {
             System.out.println("Incorrect input");
-            return ;
         }
     }
 
@@ -138,18 +134,18 @@ class Operations
 
     public static int do_calc(int op_1, int op_2, String operand)
     {
-        if (operand.equals("+"))
-            return (op_1 + op_2);
-        else if (operand.equals("-"))
-            return (op_1 - op_2);
-        else if (operand.equals("*"))
-            return (op_1 * op_2);
-        else if (operand.equals("/"))
-        {
-            if (op_2 != 0)
-                return (op_1 / op_2);
-            else
-                return (0);
+        switch (operand) {
+            case "+":
+                return (op_1 + op_2);
+            case "-":
+                return (op_1 - op_2);
+            case "*":
+                return (op_1 * op_2);
+            case "/":
+                if (op_2 != 0)
+                    return (op_1 / op_2);
+                else
+                    return (0);
         }
         return (0);
     }
@@ -163,7 +159,7 @@ public class Main {
 
         int result = 0;
         String[] vars = input_str.split(" ");
-        int error = 0;
+        int error;
         if ((error = Operations.check_correct(vars)) != 0)
         {
             Operations.print_error(error);
@@ -201,6 +197,5 @@ public class Main {
             System.out.println(Conversions.int_to_roman(result));
         else
             System.out.println(result);
-        return ;
     }
 }
